@@ -81,7 +81,7 @@ for username, action, calories, timestamp in logs:
     else:
         daily_summary[formatted_date][username] += calories
 
-print(daily_summary)
+print(f"Daily Summary Per User: {daily_summary}")
 
 # ------------------------------------------
 # PART 4: WEEKLY CALORIE SUMMARY
@@ -93,10 +93,36 @@ print(daily_summary)
 # Hint: You can use datetime_object - timedelta(days=datetime_object.weekday())
 # to get the Monday of the week
 
-# weekly_summary = {}
+weekly_summary = {}
 # loop through daily_summary
 # accumulate per user per week
 
+from datetime import datetime, timedelta
+
+weekly_summary = {}
+
+for day_str, users in daily_summary.items():
+    # 1. Convert day string to datetime
+    day_dt = datetime.strptime(day_str, "%Y-%m-%d")
+
+    # 2. Find Monday of that week
+    week_start_dt = day_dt - timedelta(days=day_dt.weekday())
+
+    # 3. Convert Monday back to string
+    week_start = week_start_dt.strftime("%Y-%m-%d")
+    
+    # 4. Ensure week exists
+    if week_start not in weekly_summary:
+        weekly_summary[week_start] = {}
+
+    # 5. Accumulate per user
+    for username, calories in users.items():
+        if username not in weekly_summary[week_start]:
+            weekly_summary[week_start][username] = calories
+        else:
+            weekly_summary[week_start][username] += calories
+
+print(f"Weekly Summary: {weekly_summary}")
 
 # ------------------------------------------
 # PART 5: ALERTS
@@ -107,9 +133,11 @@ print(daily_summary)
 #
 # Structure: { username: {"days": [dates], "weeks": [week_start_dates]} }
 
-# alerts = {}
+alerts = {}
 # loop through daily_summary and weekly_summary
 # detect exceedances
+
+
 
 
 # ------------------------------------------
@@ -123,3 +151,4 @@ print(daily_summary)
 # loop through daily_summary
 # loop through weekly_summary
 # loop through alerts
+
