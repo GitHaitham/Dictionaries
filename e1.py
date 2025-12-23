@@ -68,10 +68,20 @@ print(f"Total Calories Per User: {total_calories}")
 # Key   → YYYY-MM-DD
 # Value → dict { username → calories that day }
 
-# daily_summary = {}
+daily_summary = {}
 # extract date from datetime
 # sum calories per user per day
 
+for username, action, calories, timestamp in logs:
+    formatted_date=datetime.strptime(timestamp,"%Y-%m-%d %H:%M").strftime("%Y-%m-%d")
+    if not formatted_date in daily_summary:
+        daily_summary[formatted_date]={}
+    if not username in daily_summary[formatted_date]:
+        daily_summary[formatted_date][username]= calories
+    else:
+        daily_summary[formatted_date][username] += calories
+
+print(daily_summary)
 
 # ------------------------------------------
 # PART 4: WEEKLY CALORIE SUMMARY
@@ -113,4 +123,3 @@ print(f"Total Calories Per User: {total_calories}")
 # loop through daily_summary
 # loop through weekly_summary
 # loop through alerts
-
