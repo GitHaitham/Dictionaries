@@ -5,15 +5,15 @@ from datetime import datetime, timedelta
 # ==========================================
 
 logs = [
-    ("Ali",  "eat",  450, "2025-12-17 08:10"),
-    ("Ali",  "eat",  700, "2025-12-17 13:30"),
-    ("Sara", "eat",  300, "2025-12-17 09:00"),
-    ("Sara", "eat",  600, "2025-12-17 19:15"),
-    ("Ali",  "eat",  900, "2025-12-18 20:00"),
-    ("Omar", "eat",  500, "2025-12-18 10:30"),
-    ("Omar", "eat",  800, "2025-12-18 18:45"),
-    ("Ali",  "eat",  1200,"2025-12-21 12:00"),
-    ("Sara", "eat",  1500,"2025-12-21 14:00"),
+    ("Ali", "eat", 450, "2025-12-17 08:10"),
+    ("Ali", "eat", 700, "2025-12-17 13:30"),
+    ("Sara", "eat", 300, "2025-12-17 09:00"),
+    ("Sara", "eat", 600, "2025-12-17 19:15"),
+    ("Ali", "eat", 900, "2025-12-18 20:00"),
+    ("Omar", "eat", 500, "2025-12-18 10:30"),
+    ("Omar", "eat", 800, "2025-12-18 18:45"),
+    ("Ali", "eat", 1200, "2025-12-21 12:00"),
+    ("Sara", "eat", 1500, "2025-12-21 14:00"),
 ]
 
 # Each log: (username, action, calories, timestamp)
@@ -31,15 +31,13 @@ user_logs = {}
 # append per user
 
 for username, action, calories, timestamp in logs:
-    parsed_datetime=datetime.strptime(timestamp, "%Y-%m-%d %H:%M")
+    parsed_datetime = datetime.strptime(timestamp, "%Y-%m-%d %H:%M")
     if not username in user_logs:
-        user_logs[username]=[(calories, parsed_datetime)]
+        user_logs[username] = [(calories, parsed_datetime)]
     else:
         user_logs[username].append((calories, parsed_datetime))
 
 print(f"User Logs: {user_logs}")
-
-
 
 # ------------------------------------------
 # PART 2: TOTAL CALORIES PER USER
@@ -54,10 +52,10 @@ total_calories = {}
 
 for username, log in user_logs.items():
     if not username in total_calories:
-        total_calories[username]=0
+        total_calories[username] = 0
     for entry in log:
         calories, timestamp = entry
-        total_calories[username]+=calories
+        total_calories[username] += calories
 
 print(f"Total Calories Per User: {total_calories}")
 
@@ -73,11 +71,11 @@ daily_summary = {}
 # sum calories per user per day
 
 for username, action, calories, timestamp in logs:
-    formatted_date=datetime.strptime(timestamp,"%Y-%m-%d %H:%M").strftime("%Y-%m-%d")
+    formatted_date = datetime.strptime(timestamp, "%Y-%m-%d %H:%M").strftime("%Y-%m-%d")
     if not formatted_date in daily_summary:
-        daily_summary[formatted_date]={}
+        daily_summary[formatted_date] = {}
     if not username in daily_summary[formatted_date]:
-        daily_summary[formatted_date][username]= calories
+        daily_summary[formatted_date][username] = calories
     else:
         daily_summary[formatted_date][username] += calories
 
@@ -131,30 +129,31 @@ print(f"Weekly Summary: {weekly_summary}")
 # loop through daily_summary and weekly_summary
 # detect exceedances
 
+
+
+
+# loop through daily_summary
 alerts = {}
 
-#add days
-for day, log in daily_summary.items():
-    for username, calories in log.items():
-        if calories>2000:
-            if not username in alerts:
-                alerts[username]={"days":[]}
-            if not day in alerts[username]["days"]:
-                alerts[username]["days"].append(day)
-                
-#add weeks
-for week_start_date, logs in weekly_summary.items():
+# ---------- DAILY ALERTS ----------
+for day, logs in daily_summary.items():
     for username, calories in logs.items():
-        if calories>10000:
-            if not username in alerts:
-                alerts[username]={"weeks":[]}
-            else:
-                alerts[username].update({"weeks":[week_start_date]})
-            if not week_start_date in alerts[username]["weeks"]:
-                alerts[username]["weeks"].append(week_start_date)
+        if calories > 1000:
+            # Ensure the user exists and initialize sets if not
+            alerts.setdefault(username, {"days": set(), "weeks": set()})
+            # Add the day to the set (duplicates automatically ignored)
+            alerts[username]["days"].add(day)
 
-print(alerts)
+# ---------- WEEKLY ALERTS ----------
+for week_start, logs in weekly_summary.items():
+    for username, calories in logs.items():
+        if calories > 1000:
+            # Ensure the user exists and initialize sets if not
+            alerts.setdefault(username, {"days": set(), "weeks": set()})
+            # Add the week to the set (duplicates automatically ignored)
+            alerts[username]["weeks"].add(week_start)
 
+print(f"Alerts: {alerts}")
 
 # ------------------------------------------
 # PART 6: FINAL OUTPUT
