@@ -104,17 +104,13 @@ weekly_summary = {}
 for day_str, users in daily_summary.items():
     # 1. Convert day string to datetime
     day_dt = datetime.strptime(day_str, "%Y-%m-%d")
-
     # 2. Find Monday of that week
     week_start_dt = day_dt - timedelta(days=day_dt.weekday())
-
     # 3. Convert Monday back to string
     week_start = week_start_dt.strftime("%Y-%m-%d")
-    
     # 4. Ensure week exists
     if week_start not in weekly_summary:
         weekly_summary[week_start] = {}
-
     # 5. Accumulate per user
     for username, calories in users.items():
         if username not in weekly_summary[week_start]:
@@ -132,12 +128,32 @@ print(f"Weekly Summary: {weekly_summary}")
 # a week with more than 10000 calories
 #
 # Structure: { username: {"days": [dates], "weeks": [week_start_dates]} }
-
-alerts = {}
 # loop through daily_summary and weekly_summary
 # detect exceedances
 
+alerts = {}
 
+#add days
+for day, log in daily_summary.items():
+    for username, calories in log.items():
+        if calories>2000:
+            if not username in alerts:
+                alerts[username]={"days":[]}
+            if not day in alerts[username]["days"]:
+                alerts[username]["days"].append(day)
+                
+#add weeks
+for week_start_date, logs in weekly_summary.items():
+    for username, calories in logs.items():
+        if calories>10000:
+            if not username in alerts:
+                alerts[username]={"weeks":[]}
+            else:
+                alerts[username].update({"weeks":[week_start_date]})
+            if not week_start_date in alerts[username]["weeks"]:
+                alerts[username]["weeks"].append(week_start_date)
+
+print(alerts)
 
 
 # ------------------------------------------
@@ -151,4 +167,3 @@ alerts = {}
 # loop through daily_summary
 # loop through weekly_summary
 # loop through alerts
-
